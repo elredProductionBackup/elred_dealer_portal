@@ -10,6 +10,7 @@ const InputField = ({
   placeholder,
   onChange,
   icon,
+  error,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -21,7 +22,7 @@ const InputField = ({
   };
 
   return (
-    <div className="w-full flex flex-col items-start gap-[14px]">
+    <div className="w-full flex flex-col items-start gap-[8px] relative">
       {/* Label */}
       {label && (
         <label
@@ -32,7 +33,11 @@ const InputField = ({
         </label>
       )}
 
-      <div className="w-full relative flex items-center rounded-xl border border-[#CBD5E0] bg-[#F7FAFC]">
+      <div
+        className={`w-full relative flex items-center rounded-xl border ${
+          error ? "border-red-500" : "border-[#CBD5E0]"
+        } bg-[#F7FAFC]`}
+      >
         {/* Input */}
         <input
           type={inputType}
@@ -63,6 +68,16 @@ const InputField = ({
           </span>
         )}
       </div>
+
+       {/* {error && (
+        <p className="text-red-500 text-sm font-medium mt-1">{error}</p>
+      )}  */}
+       {/* ✅ Error Message */}
+        {error && (
+          <span className="absolute bottom-[-4px] left-0 translate-y-full text-[12px] text-red-500 font-medium">
+            {error}
+          </span>
+        )}
     </div>
   );
 };

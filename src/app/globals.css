@@ -23,76 +23,81 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-inter);
+  display: flex;
+  align-items: center;
+  flex-direction: column; 
 }
 input{
   font-family: var(--font-inter);
 }
 
 
-.login-container{
-  min-height: 100dvh;
+.header{
   width: 100%;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 50px;
+  max-width: 1600px;
+  border-bottom: 0.5px solid #E4E3E3
+}
+.header__nav{
+  display: flex;
+  gap: 49px;
+  align-items: center;
+  font-weight: 500;
+}
+.header__nav-btn{
+  padding: 10px;
+  color: #899197;
+  cursor: pointer;
+}
+.header__nav-btn--active{
+  background-color: #1C4532;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 100px;
+}
+
+.header__logout-btn{
+  border: 1px solid #E72D38;
+  border-radius: 66px;
+  padding: 10px 24.5px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #E72D38;
+  font-weight: 500;
+}
+
+.header__actions{
+  display: flex;
+  align-items: center;
+  gap: 23px;
+}
+.header__cart{
+  border-radius: 50%;
+  border: 1px solid #1C45324D;
+  min-height: 40px;
+  min-width: 40px;
+  display: flex;
   align-items: center;
   justify-content: center;
-  gap: 60px;
+  position: relative;
 }
-.brand-section img{
-  object-fit: contain;
-  width: 190px;
-}
-.login-form{
+.header__cart-badge{
+  position: absolute;
+  top: 0;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 90%;
-  max-width: 528px;
-  gap: 34px;
+  align-items: center;justify-content: center;
+  font-size: 10px;
+  color: white;
+  right: -.8px;
+  background: #E72D38;
+  height: 18px;
+  width: 18px;
+  border-radius: 50%;
+  border: 1px solid #FFFFFF
 }
-.login-form h1{
-  font-size: 48px;
-  font-weight: 700;
-  color: #171923;
-}
-.login-form p{
-  font-size: 18px;
-  line-height: 20px;
-  color: #898A8D;
-  font-weight: 400;
-
-}
-
-.login-options{
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-}
-.login-options label{
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #718096;
-  cursor: pointer;
-}
-
-.login-options a{
-  font-weight: 500;
-  line-height: 150%;
-  text-decoration: underline;
-  text-decoration-style: solid;
-  color: #1C4532;
-}
-
-.login-form button{
-  background: #1C4532;
-  min-height: 60px;
-  width: 100%;
-  border-radius: 20px;
-  color: #F7FAFC;
-  font-weight: 600;
-  line-height: 28px;
-  font-size: 20px;
-  cursor: pointer;
-  margin-top: 6px;
+.header__logout-text{
 }
