@@ -21,10 +21,19 @@ const InputField = ({
   };
 
   return (
-    <div className="input-field">
-      {label && <label htmlFor={name}>{label}</label>}
+    <div className="w-full flex flex-col items-start gap-[14px]">
+      {/* Label */}
+      {label && (
+        <label
+          htmlFor={name}
+          className="text-[#718096] font-medium leading-[20px]"
+        >
+          {label}
+        </label>
+      )}
 
-      <div className="input-wrapper">
+      <div className="w-full relative flex items-center rounded-xl border border-[#CBD5E0] bg-[#F7FAFC]">
+        {/* Input */}
         <input
           type={inputType}
           id={name}
@@ -33,18 +42,22 @@ const InputField = ({
           placeholder={placeholder}
           onChange={onChange}
           autoComplete={type === "password" ? "current-password" : "off"}
+          className="w-full min-h-[55px] border-none outline-none pl-3 pr-[54px] bg-transparent placeholder:text-[#899197]"
         />
 
+        {/* Right Icon */}
         {icon && (
           <span
-            className={`icon-right ${type === "password" ? "clickable" : ""}`}
+            className={`absolute right-0 flex items-center justify-center min-w-[54px] h-[40px] border-l border-[#CFD9E0] ${
+              type === "password" ? "cursor-pointer" : ""
+            }`}
             onClick={handleIconClick}
           >
             <Image
               src={icon}
               alt={`${name}-icon`}
-              width={20}
-              height={20}
+              width={24}
+              height={24}
               priority
             />
           </span>
