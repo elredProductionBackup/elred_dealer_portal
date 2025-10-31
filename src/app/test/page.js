@@ -2,6 +2,7 @@
 import ConfirmationPopup from "../../../components/ConfirmationPopup";
 import ProductImage from "../../../components/ProductImage";
 import SelectableGroup from "../../../components/SelectableGroup";
+import QuantityInput from "../../../components/QuantityInput";
 import product1 from "../../../assets/images/product-1.png";
 import product2 from "../../../assets/images/product-2.png";
 import product3 from "../../../assets/images/product-3.png";
@@ -40,6 +41,10 @@ export default function TestPage() {
         defaultValue="RNB"
         onChange={handlePackagingChange}
       />
+      </div>
+
+      <div className="w-full max-w-lg">
+        <QuantityInput />
       </div>
     </main>
   );
