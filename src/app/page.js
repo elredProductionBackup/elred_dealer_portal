@@ -5,41 +5,28 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import ATinksImage from "../../assets/images/atinks-logo.svg";
 import InputField from "../../components/InputField";
-import EyeIcon from "../../assets/icons/AiFillEye.svg";
-import Link from "next/link";
 
 const Login = () => {
   const router = useRouter();
   const [isAuthVerifying, setIsAuthVerifying] = useState(true);
   const [form, setForm] = useState({
     email: "",
-    password: "",
-    rememberMe: false,
     loading: false,
-    error: "",
   });
   const [emailError, setEmailError] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-
-    if (name === "email") {
-      setEmailError("");
-    }
-  };
-
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    if (submitted) setEmailError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setForm((prev) => ({ ...prev, error: "" }));
+    setSubmitted(true);
 
     if (!form.email) {
       setEmailError("Please enter your email.");
@@ -49,25 +36,14 @@ const Login = () => {
       return;
     }
 
-    if (!form.password) {
-      setForm((prev) => ({ ...prev, error: "Please enter your password." }));
-      return;
-    }
-
     try {
       setForm((prev) => ({ ...prev, loading: true }));
       await new Promise((res) => setTimeout(res, 1000));
       localStorage.setItem("authToken", "mock_token_123");
 
-      if (form.rememberMe) {
-        localStorage.setItem("rememberEmail", form.email);
-      } else {
-        localStorage.removeItem("rememberEmail");
-      }
-
       router.push("/home");
     } catch (err) {
-      setForm((prev) => ({ ...prev, error: "Login failed. Try again." }));
+      console.error("Login failed:", err);
     } finally {
       setForm((prev) => ({ ...prev, loading: false }));
     }
@@ -79,12 +55,6 @@ const Login = () => {
       router.replace("/home");
       return;
     }
-
-    const remembered = localStorage.getItem("rememberEmail");
-    if (remembered) {
-      setForm((prev) => ({ ...prev, email: remembered, rememberMe: true }));
-    }
-
     setIsAuthVerifying(false);
   }, [router]);
 
@@ -96,9 +66,10 @@ const Login = () => {
     );
   }
 
+  const isButtonDisabled = form.loading || !validateEmail(form.email);
+
   return (
     <div className="min-h-[100dvh] w-full flex flex-col items-center justify-center gap-[60px]">
-      {/* Logo */}
       <div className="flex justify-center">
         <Image
           src={ATinksImage}
@@ -108,7 +79,6 @@ const Login = () => {
         />
       </div>
 
-      {/* Form */}
       <form
         onSubmit={handleSubmit}
         className="flex flex-col items-center w-[90%] max-w-[528px] gap-[34px]"
@@ -118,7 +88,6 @@ const Login = () => {
           Please enter registered email id
         </p>
 
-        {/* Email Input with error */}
         <InputField
           label="E-mail"
           type="email"
@@ -126,60 +95,21 @@ const Login = () => {
           placeholder="example@gmail.com"
           value={form.email}
           onChange={handleChange}
-          error={emailError} 
+          error={submitted ? emailError : ""}
         />
 
-        {/* Password Input */}
-        <InputField
-          label="Password"
-          type="password"
-          name="password"
-          placeholder="•••••••"
-          value={form.password}
-          onChange={handleChange}
-          icon={EyeIcon}
-        />
-
-        {/* Remember me + Forgot */}
-        <div className="w-full flex justify-between">
-          <label className="flex items-center gap-2 text-[#718096] cursor-pointer">
-            <input
-              type="checkbox"
-              name="rememberMe"
-              checked={form.rememberMe}
-              onChange={handleChange}
-              className="cursor-pointer"
-            />
-            Remember me
-          </label>
-
-          <Link
-            href="/forgot-password"
-            className="font-medium leading-[150%] underline text-[#1C4532]"
-          >
-            Forgot Password?
-          </Link>
-        </div>
-
-        {/* Toast Message poppup */}
-        {/* {form.error && (
-          <p className="text-red-500 text-sm text-center w-full">
-            {form.error}
-          </p>
-        )} */}
-
-        {/* Submit Button */}
         <button
           type="submit"
-          disabled={form.loading}
-          className={`min-h-[60px] w-full rounded-[20px] text-[#F7FAFC] font-semibold leading-[28px] text-[20px] cursor-pointer mt-[6px] bg-[#1C4532]
-            ${emailError ? "opacity-50" : "opacity-100"} 
-            disabled:opacity-50`}
+          disabled={isButtonDisabled}
+          className={`min-h-[60px] w-full rounded-[20px] text-[#F7FAFC] font-semibold leading-[28px] text-[20px] mt-[6px] transition-opacity
+            ${
+              isButtonDisabled
+                ? "opacity-50 cursor-not-allowed bg-[#1C4532]"
+                : "opacity-100 bg-[#1C4532] cursor-pointer"
+            }`}
         >
           {form.loading ? "Signing in..." : "Sign in"}
         </button>
-
-
       </form>
     </div>
   );
