@@ -10,7 +10,7 @@ import CartIcon from "../assets/icons/cartIcon.svg";
 const Header = () => {
   const pathname = usePathname();
   const router = useRouter();
-  const cartCount = 1;
+  const cartCount = 4;
 
   const navItems = [
     { name: "Home", href: "/home" },
