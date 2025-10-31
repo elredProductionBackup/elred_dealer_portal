@@ -19,6 +19,7 @@
     --foreground: #ededed;
   }
 } */
+ 
 *{
   -webkit-tap-highlight-color: transparent;
 }
@@ -41,7 +42,6 @@ input{
 }
 
 
-/* custom scrollbar styling */
 #style-2::-webkit-scrollbar {
   height: 5px;
   background-color: #fff;
@@ -61,4 +61,3 @@ input{
 #style-2::-webkit-scrollbar-thumb:hover {
   background-color: #b5b5b5;
 }
-
