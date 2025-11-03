@@ -10,6 +10,7 @@ import api from "./lib/axios";
 
 
 const Login = () => {
+  console.log('DEPLOYED URL')
   const router = useRouter();
   const [isAuthVerifying, setIsAuthVerifying] = useState(true);
   const [form, setForm] = useState({ email: "", loading: false });
