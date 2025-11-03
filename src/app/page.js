@@ -6,8 +6,8 @@ import Image from "next/image";
 import ATinksImage from "../../assets/images/atinks-logo.svg";
 import InputField from "../../components/InputField";
 import OtpScreen from "../../components/OtpScreen";
+import api from "./lib/axios";
 
-const dummyEmails = ["meezan@elred.io"];
 
 const Login = () => {
   const router = useRouter();
@@ -16,6 +16,7 @@ const Login = () => {
   const [emailError, setEmailError] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
+  const [userCode, setUserCode] = useState('')
 
   // OTP States
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -31,42 +32,79 @@ const Login = () => {
     if (submitted) setEmailError("");
   };
 
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitted(true);
 
-    if (!form.email) return setEmailError("Please enter your email.");
-    if (!validateEmail(form.email)) return setEmailError("Invalid email ID");
-
+    // validate
+    if (!form.email) {
+      setEmailError("Please enter your email.");
+      return;
+    }
+   
+    setEmailError(null);
     setForm((prev) => ({ ...prev, loading: true }));
 
-    setTimeout(() => {
-      if (dummyEmails.includes(form.email.trim().toLowerCase())) {
-        setShowOtp(true);
-        setTimer(30);
-        setCanResend(false);
-      } else {
-        setEmailError("Invalid email ID");
-      }
-      setForm((prev) => ({ ...prev, loading: false }));
-    }, 1000);
-  };
+    try {
+      const email = form.email.trim().toLowerCase();
 
-  const handleVerifyOtp = () => {
-    const finalOtp = otp.join("");
-    if (finalOtp === "123456") {
-      localStorage.setItem("authToken", "mock_token_123");
-      router.push("/home");
-    } else {
-      setOtpError(true);
+      // POST to your backend (adjust path as needed)
+      const { data } = await api.post('/portalVerifyCompanyEmail', { email });
+
+      console.log(data, 'DATA')
+      // backend should return: { ok: true } (and optionally { ttlSeconds: 30 })
+      if (data?.success) {
+        setShowOtp(true);
+        setTimer(Number(data?.ttlSeconds ?? 30)); // start OTP countdown
+        setCanResend(false);
+        setUserCode(data?.result?.[0]?.userCode)
+      } else {
+        setEmailError(data?.message || "Unable to send OTP. Please try again.");
+      }
+    } catch (err) {
+      
+      if (err?.response?.data?.errorCode === -1) {
+        setEmailError('Invalid email ID');
+      }
+      console.log(err, 'ERROR')
+    } finally {
+      setForm((prev) => ({ ...prev, loading: false }));
     }
   };
 
-  const handleResendOtp = () => {
+  const handleVerifyOtp = async () => {
+    const finalOtp = otp.join("");
+
+    try {
+      const res = await api.post('/portalVerifyCompanyOtp', {
+        otp: finalOtp,
+        userCode
+      })
+
+      console.log(res, 'response')
+      if (res?.status === 200) {
+        localStorage.setItem('authToken', res?.data?.result?.[0]?.accessToken)
+        localStorage.setItem('userData', JSON.stringify(res?.data))
+        router.push("/home");
+      }
+    } catch (error) {
+      console.log(error, 'error')
+    }
+  };
+
+  const handleResendOtp = async () => {
     setOtp(["", "", "", "", "", ""]);
     setTimer(30);
     setCanResend(false);
     setOtpError(false);
+    const email = form.email.trim().toLowerCase();
+    try {
+      const res = await api.post('/portalVerifyCompanyEmail', { email });
+      console.log(res, 'response')
+    } catch (error) {
+      console.log(error, 'error')
+    }
   };
 
   useEffect(() => {
@@ -96,7 +134,7 @@ const Login = () => {
       </div>
     );
 
-    // OTP Screen View
+  // OTP Screen View
   if (showOtp)
     return (
       <OtpScreen formEmail={form.email} otp={otp} setOtp={setOtp} otpError={otpError} setOtpError={setOtpError}
@@ -116,7 +154,7 @@ const Login = () => {
         className="flex flex-col items-center w-[90%] max-w-[528px] gap-[34px]"
       >
         <h1 className="text-[48px] font-bold text-[#171923]">Login</h1>
-        <p className="text-[18px] text-[#898A8D] mb-[6px]">
+        <p className="text-[18px] text-[#898A8D] mb-1.5">
           Please enter registered email id to get OTP
         </p>
 
@@ -124,9 +162,8 @@ const Login = () => {
           value={form.email} onChange={handleChange} error={submitted ? emailError : ""} />
 
         <button type="submit" disabled={isButtonDisabled}
-          className={`min-h-[60px] w-full rounded-[20px] text-[#F7FAFC] font-semibold text-[20px] mt-[6px] ${
-            isButtonDisabled ? "bg-[#1C4532] opacity-50" : "bg-[#1C4532]"
-          }`}
+          className={`min-h-[60px] w-full rounded-[20px] text-[#F7FAFC] font-semibold text-[20px] mt-1.5 ${isButtonDisabled ? "bg-[#1C4532] opacity-50" : "bg-[#1C4532]"
+            }`}
         >
           {form.loading ? "Signing in..." : "Sign in"}
         </button>
