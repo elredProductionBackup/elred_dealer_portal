@@ -30,6 +30,22 @@ const OtpInput = ({ value, setValue, error, setError }) => {
     }
   };
 
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const pasteData = e.clipboardData.getData("text").trim();
+
+    if (/^\d+$/.test(pasteData)) {
+      const digits = pasteData.split("").slice(0, value.length);
+      const newOtp = [...value];
+      digits.forEach((digit, i) => {
+        newOtp[i] = digit;
+      });
+      setValue(newOtp);
+      if (error) setError(false);
+      otpRefs.current[digits.length - 1]?.focus();
+    }
+  };
+
   return (
     <div className="relative w-full">
       <div className="flex w-full justify-between gap-[39px]">
@@ -40,8 +56,10 @@ const OtpInput = ({ value, setValue, error, setError }) => {
             value={val}
             onChange={(e) => handleInput(index, e)}
             onKeyDown={(e) => handleKeyDown(index, e)}
+            onPaste={handlePaste}
             maxLength={1}
             type="tel"
+            inputMode="numeric"
             className={`w-[55px] min-h-[55px] rounded-[10px] border ${
               error ? "border-[#F12632]" : "border-[#CBD5E0]"
             } bg-[#F7FAFC] text-center outline-none transition-all duration-400`}
