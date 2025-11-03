@@ -74,24 +74,29 @@ const Login = () => {
   };
 
   const handleVerifyOtp = async () => {
-    const finalOtp = otp.join("");
+  const finalOtp = otp.join("");
+  setOtpError("");
 
-    try {
-      const res = await api.post('/portalVerifyCompanyOtp', {
-        otp: finalOtp,
-        userCode
-      })
+  try {
+    const res = await api.post('/portalVerifyCompanyOtp', {
+      otp: finalOtp,
+      userCode
+    });
 
-      console.log(res, 'response')
-      if (res?.status === 200) {
-        localStorage.setItem('authToken', res?.data?.result?.[0]?.accessToken)
-        localStorage.setItem('userData', JSON.stringify(res?.data))
-        router.push("/home");
-      }
-    } catch (error) {
-      console.log(error, 'error')
+    if (res?.status === 200) {
+      localStorage.setItem('authToken', res?.data?.result?.[0]?.accessToken);
+      localStorage.setItem('userData', JSON.stringify(res?.data));
+      router.push("/home");
     }
-  };
+  } catch (error) {
+    console.log(error, 'error');
+
+    const message = error?.response?.data?.message || "Invalid or expired OTP. Please try again.";
+
+    setOtpError(message);
+  }
+};
+
 
   const handleResendOtp = async () => {
     setOtp(["", "", "", "", "", ""]);

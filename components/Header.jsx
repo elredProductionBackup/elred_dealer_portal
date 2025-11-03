@@ -19,7 +19,7 @@ const Header = () => {
   ];
 
   const handleLogout = () => {
-    localStorage.removeItem("authToken");
+    localStorage.clear(); 
     router.push("/");
   };
 

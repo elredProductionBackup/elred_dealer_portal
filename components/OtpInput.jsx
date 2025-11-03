@@ -51,7 +51,7 @@ const OtpInput = ({ value, setValue, error, setError }) => {
 
       {error && (
         <p className="absolute bottom-[-41px] left-0 text-[#E53E3E] text-[14px] font-medium">
-          Invalid OTP
+          {error}
         </p>
       )}
     </div>
