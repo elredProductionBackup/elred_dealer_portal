@@ -20,7 +20,7 @@ export default function ColorSelector({ colors }) {
             key={color.name}
             type="button"
             onClick={() => handleChange(color)}
-            className="flex flex-col items-center focus:outline-none"
+            className="flex flex-col items-center focus:outline-none cursor-pointer"
           >
             <div
               className={`w-14 h-14 rounded-full mb-[16px] transition-all duration-200 ${

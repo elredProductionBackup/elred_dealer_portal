@@ -30,7 +30,7 @@ export default function QuantityInput() {
         onChange={handleChange}
         min={12}
         onBlur={handleBlur}
-        className={`bg-[#F7F7F7] rounded-[6px] w-[543px] h-[60px] px-4 py-3 text-[20px] font-medium border transition focus:outline-none focus:ring-2 ${
+        className={`bg-[#F7F7F7] rounded-[6px] w-[443px] h-[60px] px-4 py-3 text-[20px] font-medium border transition focus:outline-none focus:ring-2 ${
           hasError
             ? "border-red-500 focus:ring-red-300"
             : "border-none focus:ring-gray-300"
